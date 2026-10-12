@@ -101,7 +101,7 @@ class Config
 
     // ---------- presets ----------
 
-    public static readonly string[] Presets = { "Chill", "Aura Max", "Inferno", "Rave", "Default" };
+    public static readonly string[] Presets = { "Chill", "Aura Max", "Inferno", "Rave", "Meme Lord", "Total Chaos", "Default" };
 
     public void ApplyPreset(string name)
     {
@@ -124,7 +124,8 @@ class Config
                 if (!Theme.Name.Equals("Lava")) ThemeName = "Fire";
                 break;
             case "Rave":
-                MusicReactive = true; Equalizer = true; Plasma = true; LightningRate = 2; GlowStrength = 1.6;
+                MusicReactive = true; Equalizer = true; Plasma = true; LightningRate = 2; GlowStrength = 1.6; Chaos = true; ChaosLevel = 0.4;
+                DisabledEvents.Clear();
                 break;
             case "Meme Lord":
                 Meme = true; ChaosLevel = 0.7; Sparks = true; GlowStrength = 1.3;

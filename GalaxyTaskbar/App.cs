@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-class App : ApplicationContext, IHost
+class App : ApplicationContext, ICrazyHost
 {
     readonly string dir = Path.GetDirectoryName(Application.ExecutablePath);
     readonly string cfgPath;
@@ -89,9 +89,27 @@ class App : ApplicationContext, IHost
         menu.Items.Add(new ToolStripMenuItem(text, null, (s, e) => { set(!get()); Changed(); }) { Checked = get() });
     }
 
-    protected virtual void AddExtraMenuItems(ContextMenuStrip m) { }
+    protected virtual void AddExtraMenuItems(ContextMenuStrip m)
+    {
+        AddToggle("Crazy mode", () => cfg.Chaos, v => cfg.Chaos = v);
+        AddToggle("Meme mode", () => cfg.Meme, v => cfg.Meme = v);
+        var ev = new ToolStripMenuItem("Do something crazy");
+        ev.DropDownItems.Add("Surprise me!", null, (s, e) => Trigger(null));
+        ev.DropDownItems.Add(new ToolStripSeparator());
+        foreach (var k in Director.Kinds)
+        {
+            var name = k.Name;
+            ev.DropDownItems.Add(name, null, (s, e) => Trigger(name));
+        }
+        m.Items.Add(ev);
+    }
 
-    protected virtual SettingsForm CreateSettings() { return new SettingsForm(this); }
+    public void Trigger(string eventName)
+    {
+        foreach (var o in overlays.Values) { var co = o as CrazyOverlay; if (co != null) co.Director.Request(eventName); }
+    }
+
+    protected virtual SettingsForm CreateSettings() { return new CrazySettings(this); }
 
     public void OpenSettings()
     {
@@ -129,7 +147,7 @@ class App : ApplicationContext, IHost
         while ((h = Win.FindWindowEx(IntPtr.Zero, h, "Shell_SecondaryTrayWnd", null)) != IntPtr.Zero) yield return h;
     }
 
-    protected virtual Overlay CreateOverlay(IntPtr taskbar) { return new Overlay(taskbar, cfg, nebula); }
+    protected virtual Overlay CreateOverlay(IntPtr taskbar) { return new CrazyOverlay(taskbar, cfg, nebula); }
     protected IEnumerable<Overlay> Overlays { get { return overlays.Values; } }
 
     void Tick()
@@ -217,13 +235,28 @@ class App : ApplicationContext, IHost
         using (var m = new Mutex(true, "GalaxyTaskbarOverlay", out created))
         using (var showSettings = new EventWaitHandle(false, EventResetMode.AutoReset, "GalaxyTaskbarShowSettings"))
         {
-            // already running: launching it again opens the settings window
-            if (!created) { showSettings.Set(); return; }
+            string trigger = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "trigger.txt");
+            var args = Environment.GetCommandLineArgs();
+            int ei = Array.IndexOf(args, "--event");
+            string evName = ei >= 0 ? (ei + 1 < args.Length ? args[ei + 1] : "random") : null;
+            // already running: launching it again opens settings, or fires an event with --event "Name"
+            if (!created)
+            {
+                if (evName != null) try { File.WriteAllText(trigger, evName); } catch { }
+                showSettings.Set();
+                return;
+            }
             Win.SetProcessDPIAware();
             Application.EnableVisualStyles();
             var app = new App();
             var ui = SynchronizationContext.Current ?? new WindowsFormsSynchronizationContext();
-            ThreadPool.RegisterWaitForSingleObject(showSettings, (st, to) => ui.Post(_ => app.OpenSettings(), null), null, -1, false);
+            ThreadPool.RegisterWaitForSingleObject(showSettings, (st, to) => ui.Post(_ =>
+            {
+                string req = null;
+                try { if (File.Exists(trigger)) { req = File.ReadAllText(trigger).Trim(); File.Delete(trigger); } } catch { }
+                if (req == null) app.OpenSettings();
+                else app.Trigger(req.Equals("random", StringComparison.OrdinalIgnoreCase) ? null : req);
+            }, null), null, -1, false);
             if (Environment.GetCommandLineArgs().Contains("--settings")) app.OpenSettings();
             Application.Run(app);
         }
