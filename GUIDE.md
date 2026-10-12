@@ -6,10 +6,9 @@ This guide covers:
 
 1. [Building the programs](#1-building-the-programs)
 2. [Galaxy Taskbar: animated taskbar](#2-galaxy-taskbar)
-3. [Galaxy Trainer: single-player game trainer](#3-galaxy-trainer)
-4. [The website](#4-the-website)
-5. [Troubleshooting](#5-troubleshooting)
-6. [Uninstalling / undoing everything](#6-uninstalling--undoing-everything)
+3. [The website](#3-the-website)
+4. [Troubleshooting](#4-troubleshooting)
+5. [Uninstalling / undoing everything](#5-uninstalling--undoing-everything)
 
 ---
 
@@ -19,9 +18,9 @@ You don't need to install anything to build. Windows already includes the compil
 
 1. Download this repo: on GitHub, click **Code → Download ZIP** and unzip it somewhere, for example `C:\GalaxySuite`.
 2. Double-click **`build.bat`**.
-3. You should see: `Built GalaxyTaskbar\GalaxyTaskbar.exe and GalaxyTrainer\GalaxyTrainer.exe`.
+3. You should see: `Built GalaxyTaskbar\GalaxyTaskbar.exe`.
 
-If it says the compiler wasn't found, see [Troubleshooting](#5-troubleshooting).
+If it says the compiler wasn't found, see [Troubleshooting](#4-troubleshooting).
 
 ---
 
@@ -147,120 +146,7 @@ If you just want a still galaxy picture on the taskbar without running Galaxy Ta
 
 ---
 
-## 3. Galaxy Trainer
-
-A Cheat-Engine-style memory editor for **single-player** games, both desktop games and games running in a browser tab.
-It finds values like health, ammo and money in the game's memory, then lets you set or freeze them.
-
-> ⚠️ **Single-player only.** Galaxy Trainer refuses to attach to online games and to games that
-> ship with anti-cheat (EasyAntiCheat, BattlEye, Vanguard and others). Cheating online ruins the game
-> for other people and gets accounts banned. For browser games, only use it on single-player ones.
-
-### Opening it and attaching to a game
-
-1. Start your game first.
-2. Double-click `GalaxyTrainer\GalaxyTrainer.exe`.
-3. Pick your game in the drop-down at the top. Browser games are listed as **[Browser] ...**.
-   Click **Refresh list** if your game isn't there.
-4. Click **Attach**. The status bar shows "Attached: ...".
-
-If it says it couldn't open the game's memory, close it and run it as administrator
-(right-click → **Run as administrator**).
-
-### Option A: Smart auto-detect (easiest)
-
-The trainer finds health, ammo and money **by itself, by process of elimination**, while you play.
-
-1. Click **Start smart auto-detect (just play)**.
-2. **Stand still for about 5 seconds.** It's calibrating: it throws out everything that changes on its own, such as timers, positions and animations.
-3. **Play normally.** Get hurt, heal, shoot, reload, buy things, pick up coins.
-4. When it's confident, it **adds the value to the cheat table automatically** and you'll hear a sound.
-   A small box in the top-left corner of your screen tells you what it found.
-
-The results list shows what it's watching, with **Looks like** and **Confidence** columns:
-- **Green** (70%+): very likely.
-- **Yellow** (45–69%): possible.
-
-Tips:
-- **Health** is usually found after you've been hit **3 or more times** over at least 20 seconds. It needs a matching "max health" value next to it in memory, which most games have.
-- **Ammo** is found after you fire a few shots and then reload.
-- **Money** is harder to tell apart from random numbers, so it often only appears as a *possible* match. Use the money wizard (Option B) for money; it's fast and exact.
-- Click **Stop auto-detect** when you're done.
-
-### Option B: Wizards
-
-**Find money / ammo / count**: best for any number you can *see* on screen.
-
-1. Click **Find money / ammo / count**.
-2. Type the exact number shown in the game (for example `250`) and click **OK**.
-3. In the game, make the number change: spend some, earn some, fire a shot.
-4. Type the **new** number in the **Value** box and click **Next: exact value**.
-5. Repeat steps 3–4 once or twice. When only a few results are left, they're **added to the cheat table automatically**.
-
-**Find health / bars**: for values shown as a bar, without a number.
-
-1. Click **Find health / bars**.
-2. Go back to the game and use these hotkeys. They work while the game is open:
-   - Took damage → **Ctrl+Alt+D**
-   - Walked around without getting hurt → **Ctrl+Alt+U** (do this 2–3 times)
-   - Healed → **Ctrl+Alt+I**
-3. You'll hear a sound after each one. Keep going until it says **Found it!**
-
-### Option C: Manual scanning (full control)
-
-For anyone who has used Cheat Engine before.
-
-1. Tick the **value types** to search: `Int32` (whole numbers), `Float` / `Double` (decimals, common for health bars), `JS Int` (browser games).
-2. Start with **First scan: exact** (type a value) or **First scan: unknown** (no value).
-3. Narrow it down with the **Next** buttons:
-   - **exact value**: is now this number
-   - **changed** / **unchanged**
-   - **increased** / **decreased**
-   - **up by value** / **down by value**: changed by the amount in the Value box
-4. **Double-click** a result to add it to the cheat table.
-5. **New scan (reset)** starts over.
-
-The hotkeys (Ctrl+Alt+D / I / U / C) run the matching "Next" scan at any time.
-
-### Using the cheat table
-
-The bottom half of the window. Each row is one value in the game.
-
-| Action | How |
-| --- | --- |
-| **Freeze** (lock the value) | Tick the box next to it. The game can't change it, for example infinite health. |
-| **Set a value** | Select the row → **Set value...** (or double-click it). |
-| **Max it** | Select the row → **Max it** (sets 999999; Float values get 9999). |
-| **Freeze / unfreeze everything** | **Freeze all** / **Unfreeze all**. |
-| **Rename** | Select → **Rename** (for example "Health"). |
-| **Remove** | Select → **Remove**. |
-| **Save / load** | **Save table** / **Load table** (saved in `Documents\GalaxyTrainer\`). |
-
-**If changing a value doesn't seem to work:**
-- Games often keep a *display copy* of a value plus the *real* one. Try each candidate, or freeze them all.
-- Some games only update the on-screen number after something happens, like taking another hit.
-- Saved tables often stop working after you restart the game, because games put values in a different place in memory each time.
-  Just run the wizard or auto-detect again; it only takes a minute.
-
-### Browser games
-
-1. Open the game in Chrome, Edge, Brave, Opera, Vivaldi or Firefox.
-2. In the trainer, pick **[Browser] ...** for your browser and click **Attach**. It scans the browser's tab processes.
-3. Use auto-detect or the wizards as normal. **Double** and **JS Int** are ticked for you, which is how JavaScript stores numbers.
-4. Close other tabs first to make scans faster.
-
-### Hotkey summary
-
-| Hotkey | Meaning |
-| --- | --- |
-| **Ctrl+Alt+D** | The value went **down**. |
-| **Ctrl+Alt+I** | The value went **up**. |
-| **Ctrl+Alt+U** | The value did **not change**. |
-| **Ctrl+Alt+C** | The value **changed** (either way). |
-
----
-
-## 4. The website
+## 3. The website
 
 `website\index.html` is a single galaxy-themed page with moving stars. Double-click it to open it in your browser.
 To change the text or email address, open it in Notepad and edit the lines near the top of `<main>`.
@@ -269,7 +155,7 @@ To put it online for free, upload `index.html` to any static host (GitHub Pages,
 
 ---
 
-## 5. Troubleshooting
+## 4. Troubleshooting
 
 | Problem | Fix |
 | --- | --- |
@@ -278,18 +164,13 @@ To put it online for free, upload `index.html` to any static host (GitHub Pages,
 | Animation shows but covers my icons | The Taskbar Styler settings weren't applied. Redo Setup Step 2 and click **Load**. |
 | Pasting into Mod settings does nothing | Make sure you click **Load**, not Save, and replace the entire box (Ctrl+A first). |
 | Taskbar went back to normal after a Windows update | Windows sometimes resets Explorer. Open Windhawk and check the Taskbar Styler mod is still enabled. |
-| Trainer: "Not allowed" | That game is online or uses anti-cheat. This is on purpose. |
-| Trainer: "Couldn't open the game's memory" | Run Galaxy Trainer as administrator. |
-| Trainer: 0 results | The value may be stored differently. Tick more value types, click **New scan**, and try again. |
-| Trainer: auto-detect never finds health | Get hit a few more times. Some games store health unusually; use the **Find health / bars** wizard instead. |
 | Game crashed after setting a value | It was the wrong address. Restart the game and try a different candidate. |
 
 ---
 
-## 6. Uninstalling / undoing everything
+## 5. Uninstalling / undoing everything
 
 - **Stop the animation:** tray star icon → **Exit**. Delete its shortcut from `shell:startup` if you added one.
 - **Normal taskbar background:** in Windhawk, turn off (or uninstall) the **Windows 11 Taskbar Styler** mod.
 - **Remove Windhawk:** *Settings → Apps → Installed apps → Windhawk → Uninstall*.
-- **Galaxy Trainer:** close it and delete its folder. Saved cheat tables are in `Documents\GalaxyTrainer\`.
 - Nothing else is installed: no services, drivers or registry entries.
