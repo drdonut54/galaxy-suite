@@ -1,0 +1,108 @@
+<!doctype html>
+<!-- Copyright (c) 2026 drdonut54. All rights reserved. See LICENSE. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Fart Face</title>
+<meta name="description" content="Welcome to The Fart Face.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💨</text></svg>">
+<style>
+  :root {
+    --bg: #06030f;
+    --violet: #a66cf5;
+    --cyan: #4fc3ff;
+    --pink: #e83fbf;
+    --text: #efe8ff;
+    --muted: #b9a9d9;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  main {
+    position: relative; z-index: 1;
+    min-height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 48px 16px;
+  }
+  .emoji { font-size: clamp(64px, 14vw, 120px); animation: float 4s ease-in-out infinite; filter: drop-shadow(0 0 24px rgba(166,108,245,.7)); }
+  h1 {
+    font-size: clamp(40px, 9vw, 96px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05;
+    background: linear-gradient(90deg, var(--violet), var(--cyan), var(--pink), var(--violet));
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: shimmer 8s linear infinite;
+    filter: drop-shadow(0 0 18px rgba(79,195,255,.35));
+  }
+  p.tag { margin-top: 16px; font-size: clamp(16px, 3.5vw, 22px); color: var(--muted); max-width: 36ch; }
+  a.mail {
+    display: inline-block; margin-top: 36px; padding: 14px 28px; border-radius: 999px;
+    color: var(--text); text-decoration: none; font-weight: 600;
+    border: 1px solid rgba(166,108,245,.6);
+    background: rgba(40,14,80,.45);
+    box-shadow: 0 0 18px rgba(166,108,245,.45), inset 0 0 12px rgba(79,195,255,.15);
+    transition: box-shadow .2s, transform .2s;
+  }
+  a.mail:hover { box-shadow: 0 0 30px rgba(232,63,191,.7), inset 0 0 16px rgba(79,195,255,.3); transform: translateY(-2px); }
+  footer { position: relative; z-index: 1; text-align: center; padding: 16px; color: var(--muted); font-size: 13px; opacity: .7; }
+  @keyframes float { 50% { transform: translateY(-14px) rotate(-4deg); } }
+  @keyframes shimmer { to { background-position: 300% 0; } }
+  @media (prefers-reduced-motion: reduce) { .emoji, h1 { animation: none; } }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<main>
+  <div class="emoji" aria-hidden="true">💨</div>
+  <h1>The Fart Face</h1>
+  <p class="tag">Broadcasting from the outer edges of the galaxy.</p>
+  <a class="mail" href="mailto:me@thefartface.com">me@thefartface.com</a>
+</main>
+<footer>© <span id="yr"></span> thefartface.com</footer>
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+const c = document.getElementById('sky'), g = c.getContext('2d');
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W, H, stars = [], t = 0;
+function size() {
+  const d = devicePixelRatio || 1;
+  W = innerWidth; H = innerHeight;
+  c.width = W * d; c.height = H * d; g.setTransform(d, 0, 0, d, 0, 0);
+  stars = Array.from({ length: Math.round(W * H / 3500) }, () => ({
+    x: Math.random() * W, y: Math.random() * H,
+    z: Math.random(), p: Math.random() * 6.28, s: 1 + Math.random() * 3
+  }));
+}
+function frame() {
+  t += 0.016;
+  const bg = g.createRadialGradient(W * .3, H * .35, 0, W * .3, H * .35, Math.max(W, H));
+  bg.addColorStop(0, '#2a0b5e'); bg.addColorStop(.45, '#140630'); bg.addColorStop(1, '#06030f');
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  const neb = g.createRadialGradient(W * .78, H * .7, 0, W * .78, H * .7, Math.max(W, H) * .5);
+  neb.addColorStop(0, 'rgba(232,63,191,.22)'); neb.addColorStop(1, 'rgba(232,63,191,0)');
+  g.fillStyle = neb; g.fillRect(0, 0, W, H);
+  for (const s of stars) {
+    if (!still) { s.x -= (0.05 + s.z * s.z * 0.6); if (s.x < -2) { s.x = W + 2; s.y = Math.random() * H; } }
+    const a = (0.3 + 0.7 * s.z) * (0.6 + 0.4 * Math.sin(s.p + t * s.s));
+    const r = 0.4 + s.z * 1.4;
+    g.fillStyle = `rgba(255,245,255,${a})`;
+    g.beginPath(); g.arc(s.x, s.y, r, 0, 6.28); g.fill();
+    if (s.z > .93) {
+      g.strokeStyle = `rgba(200,180,255,${a * .7})`; g.lineWidth = 1;
+      const l = r * 4;
+      g.beginPath(); g.moveTo(s.x - l, s.y); g.lineTo(s.x + l, s.y); g.moveTo(s.x, s.y - l); g.lineTo(s.x, s.y + l); g.stroke();
+    }
+  }
+  if (!still) requestAnimationFrame(frame);
+}
+addEventListener('resize', () => { size(); if (still) frame(); });
+size(); frame();
+</script>
+</body>
+</html>

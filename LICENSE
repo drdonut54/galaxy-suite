@@ -1,0 +1,39 @@
+Copyright (c) 2026 drdonut54. All rights reserved.
+
+This repository and everything in it (source code, compiled programs, images,
+configuration files and documentation, together "the Software") is the
+exclusive property of the copyright holder. It is published for viewing only.
+
+NO LICENSE IS GRANTED. Without prior written permission from the copyright
+holder, you may NOT:
+
+  1. Copy, reproduce or mirror the Software, in whole or in part, outside of
+     viewing it on the website where the copyright holder has published it;
+  2. Modify, translate, or create derivative works based on the Software;
+  3. Distribute, publish, sublicense, upload or otherwise make the Software, or
+     any part or derivative of it, available to anyone else;
+  4. Sell, rent, lease, or otherwise use the Software, or any part or
+     derivative of it, for any commercial purpose, including bundling it with
+     paid products or services, putting it behind a paywall or donation gate,
+     or using it in monetized content;
+  5. Remove or alter this notice or any copyright notice in the Software;
+  6. Use the Software, or any part of it, to train, fine-tune or evaluate
+     machine-learning models.
+
+Personal use: you may build and run the Software on your own computer for your
+own private, non-commercial use. This permission does not include any of the
+rights listed above and may be revoked at any time.
+
+Hosting platform terms: where the Software is hosted on a platform whose terms
+of service require granting other users limited rights (for example, viewing or
+forking within that platform), those rights are granted only to the minimum
+extent the platform's terms require, and no further.
+
+To request permission for any other use, contact the copyright holder through
+their GitHub profile: https://github.com/drdonut54
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR ITS USE.
