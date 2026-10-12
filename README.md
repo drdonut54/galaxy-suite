@@ -17,35 +17,21 @@ Windows 11 customization by **drdonut54**.
 
 ## Galaxy Taskbar
 
-- Themes: **Galaxy**, **Matrix**, **Fire**, **Blood**, **Frost**, plus your own in `config.json`.
-- Pick a theme from the tray icon. `config.json` is created next to the exe on first run and reloads automatically when you edit it.
-- One overlay per taskbar, so secondary monitors work too.
-- Click-through, hides for full-screen apps, and drops to `batteryFps` on battery.
-- Uses well under 1% of one CPU core.
-
-`config.json`:
-
-```json
-{
-  "theme": "Galaxy",
-  "fps": 30,
-  "batteryFps": 15,
-  "auraHeight": 18,
-  "starDensity": 1.0,
-  "lightning": true,
-  "shootingStars": true,
-  "customThemes": {
-    "Synthwave": {
-      "background": "#12002A",
-      "colors": ["#FF2BD6", "#00E5FF", "#FFB000"],
-      "star": "#FFFFFF",
-      "particles": "stars"
-    }
-  }
-}
-```
-
-`particles` can be `stars`, `embers`, `code` or `frost`. Colours are `#RRGGBB` or `#AARRGGBB`.
+- **22 themes**, including Galaxy, Matrix, Fire, Blood, Frost, Synthwave, Ocean, Toxic, Sunset, Rainbow, Vaporwave, Gold, Aurora, Lava, Cyberpunk, Void, Candy, Halloween, Christmas, Neon, Love and Ice, plus your own.
+- **8 particle styles**: stars, frost, embers, falling code, snow, bubbles, hearts and confetti.
+- **Aura effects**, each switchable:
+  - glow
+  - live wire
+  - lightning arcs
+  - fire curtain
+  - flame particles
+  - plasma waves
+  - sparks
+  - music visualizer bars
+- **Music reactive**: the glow, lightning, fire and sparks pulse to whatever is playing.
+- **Settings window**: double-click the tray icon, or run the exe again while it's running. It has presets (Chill, Aura Max, Inferno, Rave), sliders for everything and a theme builder with colour pickers.
+- One overlay per taskbar, so secondary monitors work too. Click-through, hides for full-screen apps, and drops its frame rate on battery.
+- Everything is saved to `config.json` next to the exe, which you can also hand-edit; it reloads automatically.
 
 **Setup**
 

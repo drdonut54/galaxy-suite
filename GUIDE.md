@@ -65,68 +65,71 @@ Your taskbar will now show your desktop through it. That's expected; the animati
 1. Press **Win+R**, type `shell:startup` and press Enter. A folder opens.
 2. Right-click `GalaxyTaskbar.exe`, choose **Show more options → Create shortcut**, and move the shortcut into that folder.
 
-### Everyday use: the tray icon
+### Everyday use
 
-Right-click the star icon in the system tray:
+Right-click the star icon in the system tray for quick controls:
 
 | Menu item | What it does |
 | --- | --- |
-| **Theme ▸** | Switch theme instantly: Galaxy, Matrix, Fire, Blood, Frost, plus any you make. |
-| **Pause / Resume** | Stops the animation (for example, to save battery). |
-| **Edit config.json** | Opens the settings file in Notepad. |
-| **Exit** | Closes the animation. |
+| **Settings...** | Opens the Settings window. Double-clicking the tray icon does the same. |
+| **Theme ▸** | Switch theme instantly. |
+| **Presets ▸** | Chill, Aura Max, Inferno, Rave or Default, in one click. |
+| **Music reactive / Fire curtain / Lightning** | Quick on/off toggles. |
+| **Pause / Resume** | Stops the animation. |
+| **Exit** | Closes it. |
+
+Tip: running `GalaxyTaskbar.exe` again while it's already running also opens Settings.
+
+### The Settings window
+
+Every change applies **instantly** and is saved automatically.
+
+**Look**
+- **Quick presets**:
+  - **Chill**: slow and calm
+  - **Aura Max**: huge glow, lightning, plasma, sparks and fire
+  - **Inferno**: everything on fire
+  - **Rave**: music-reactive visualizer and plasma
+  - **Default**
+- **Theme** and **Particles**. Particles can follow the theme, or you can force any style on any theme.
+- **Particle amount** and **Speed**.
+- **Shooting stars**, and **Auto-cycle themes** every N minutes.
+
+**Aura**
+
+| Setting | What it does |
+| --- | --- |
+| **Glow**, **Glow strength**, **Glow height** | The coloured light rising off the taskbar. |
+| **Live wire** | A jittering white-hot line along the edge. |
+| **Lightning arcs** and **Lightning amount** | Crackling electric arcs. |
+| **Plasma waves** | Glowing waves weaving along the edge. |
+| **Sparks** | Sparks shooting up and falling back. |
+| **Fire curtain** | Flames licking up from the taskbar, in your theme's colours. |
+| **Flame particles** | Individual flames rising off the edge. |
+| **Fire height** | How tall the fire gets. |
+| **Music reactive** and **Music sensitivity** | Everything pulses to the music playing on your PC. Turn sensitivity up if it barely moves. |
+| **Visualizer bars** | Equalizer bars bouncing above the taskbar. |
+
+**Colors: the theme builder**
+1. Click **Start from current theme**.
+2. Name it, then click **Pick...** next to each colour. Use **+ Add colour** for more; rainbow-style themes use 6.
+3. Choose a particle style and click **Save and use this theme**.
+
+Your theme appears in the theme list and the tray menu. **Delete this custom theme** removes it.
+
+**Performance**
+- **Frames per second**, and a separate **On battery** frame rate for laptops.
+- **Open config.json**, and **Reset everything** (custom themes are kept).
 
 ### The themes
 
-| Theme | Look |
-| --- | --- |
-| **Galaxy** | Purple/pink/blue nebula, twinkling stars, shooting stars, violet-cyan-pink aura. |
-| **Matrix** | Black-green background with falling green code and a green aura. |
-| **Fire** | Dark red background with glowing embers rising up and an orange-yellow aura. |
-| **Blood** | Deep red with red stars and a crimson aura. |
-| **Frost** | See-through pale glass with slow white sparkles. |
+Galaxy · Matrix · Fire · Blood · Frost · Synthwave · Ocean · Toxic · Sunset · Rainbow · Vaporwave · Gold ·
+Aurora · Lava · Cyberpunk · Void · Candy · Halloween · Christmas · Neon · Love · Ice
 
-### Customizing: `config.json`
+### config.json (optional)
 
-`config.json` is created next to `GalaxyTaskbar.exe` the first time it runs. Edit it in Notepad and
-**save**. Changes apply within a second, with no restart needed.
-
-| Setting | Default | Meaning |
-| --- | --- | --- |
-| `theme` | `"Galaxy"` | Which theme is active. The tray menu changes this for you. |
-| `fps` | `30` | Animation smoothness (5–60). Lower uses less CPU. |
-| `batteryFps` | `15` | Frame rate used automatically when a laptop is unplugged. |
-| `auraHeight` | `18` | How far the glow rises above the taskbar, in pixels. `0` turns the glow and lightning off. |
-| `starDensity` | `1.0` | How many particles. `0.5` is half, `2.0` is double. |
-| `lightning` | `true` | The crackling electric arcs along the top edge. |
-| `shootingStars` | `true` | Occasional shooting stars. |
-| `customThemes` | example | Your own themes (see below). |
-
-**Making your own theme**: add an entry under `customThemes`:
-
-```json
-"customThemes": {
-  "Synthwave": {
-    "background": "#12002A",
-    "colors": ["#FF2BD6", "#00E5FF", "#FFB000"],
-    "star": "#FFFFFF",
-    "particles": "stars"
-  },
-  "Ocean": {
-    "background": "#001020",
-    "colors": ["#00A8FF", "#00FFD0", "#0050FF"],
-    "star": "#CCF6FF",
-    "particles": "frost"
-  }
-}
-```
-
-- `background`: the base colour. Use `#AARRGGBB` to make it see-through (for example `#80000000` is half-transparent black).
-- `colors`: three colours used for the clouds, the glow and the lightning.
-- `star`: the particle colour.
-- `particles`: `stars` (drift sideways), `embers` (float up), `code` (fall down) or `frost` (slow sparkles).
-
-Save the file and your theme appears in the tray's **Theme** menu.
+Everything in Settings is stored in `config.json` next to the exe. You can edit it by hand. It reloads within a second of saving, and colours use `#RRGGBB` or `#AARRGGBB`.
+Most people never need to; the Settings window covers it all.
 
 ### Good to know
 
