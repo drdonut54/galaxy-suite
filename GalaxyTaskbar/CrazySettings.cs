@@ -26,13 +26,23 @@ class CrazySettings : SettingsForm
 
     void PageCrazy()
     {
-        Head("Crazy mode", "Random events take over the taskbar every few seconds: dancing critters, fireworks, black holes, disco, a snake, glitches and more.");
+        Head("Crazy mode", "Random events take over the taskbar every few seconds: dancing memes, fireworks, black holes, disco, a snake, glitches and more.");
         Check("Crazy mode", () => C.Chaos, v => C.Chaos = v);
-        Check("Meme mode", () => C.Meme, v => C.Meme = v, "Bouncing logo, rainbow toast, Comic Sans memes, MLG hitmarkers, 'deal with it' shades. Critters get sunglasses. Works on its own or together with crazy mode.");
+        Check("Meme mode", () => C.Meme, v => C.Meme = v, "Real memes bouncing, raining, popping up and marching across the taskbar, plus Comic Sans text, MLG hitmarkers and 'deal with it' shades. Works on its own or together with crazy mode.");
         Slider("How crazy", 0, 1, 0.05, () => C.ChaosLevel, v => C.ChaosLevel = v, "0.00");
         Slider("Space above taskbar", 30, 300, 5, () => C.EffectsHeight, v => C.EffectsHeight = (int)v, "0");
         page_note("'How crazy' controls how often events happen and how many run at once. 'Space above taskbar' is how far events can reach up over your windows (they're click-through).");
         Row(Btn("Trigger a random event", () => crazy.Trigger(null), Color.FromArgb(255, 90, 200), 210));
+
+        Head("Meme images", "Meme events use real meme images: the most popular templates on Imgflip, downloaded once and kept on this PC. If they can't be downloaded, drawn versions are used instead.");
+        Check("Use real meme images", () => C.MemeImages, v => { C.MemeImages = v; if (v) MemeLibrary.EnsureLoaded(); });
+        var status = new Label { Text = MemeLibrary.Status, AutoSize = true, ForeColor = Color.FromArgb(120, 255, 170), Margin = new Padding(0, 8, 8, 0) };
+        var t = new Timer { Interval = 500 };
+        t.Tick += (o, e) => { if (status.IsDisposed) { t.Dispose(); return; } status.Text = MemeLibrary.Status; };
+        t.Start();
+        Row(Btn("Get new memes", () => MemeLibrary.Refresh(), null, 140),
+            Btn("Open meme folder", () => { System.IO.Directory.CreateDirectory(MemeLibrary.CacheDir); System.Diagnostics.Process.Start("explorer.exe", MemeLibrary.CacheDir); }, null, 150),
+            status);
 
         Head("Events", "Untick any you don't want. Press ▶ to try one right now, even with crazy mode off.");
         foreach (var k in Director.Kinds)

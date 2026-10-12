@@ -38,6 +38,34 @@ abstract class ChaosEvent
         c.G.Restore(st);
     }
 
+    static readonly ImageAttributes fadeAttr = new ImageAttributes();
+    static readonly ColorMatrix fadeMatrix = new ColorMatrix();
+
+    // Draws a downloaded meme centred on (x, y) with a border, rotation, squash and fade.
+    protected static void DrawMeme(Ctx c, Bitmap b, float x, float y, float height, float angle, float alpha, float sx = 1, float sy = 1, Color? border = null)
+    {
+        if (b == null || alpha <= 0.01f) return;
+        float h = height, w = h * b.Width / b.Height;
+        var st = c.G.Save();
+        c.G.TranslateTransform(x, y);
+        if (angle != 0) c.G.RotateTransform(angle);
+        if (sx != 1 || sy != 1) c.G.ScaleTransform(sx, sy);
+        var dst = new Rectangle((int)(-w / 2), (int)(-h / 2), (int)w, (int)h);
+        c.G.InterpolationMode = InterpolationMode.Bilinear;
+        if (alpha >= 0.99f) c.G.DrawImage(b, dst);
+        else
+        {
+            fadeMatrix.Matrix33 = alpha;
+            fadeAttr.SetColorMatrix(fadeMatrix);
+            c.G.DrawImage(b, dst, 0, 0, b.Width, b.Height, GraphicsUnit.Pixel, fadeAttr);
+        }
+        c.Pen.Color = Ctx.A(border ?? Color.White, alpha * 0.9f); c.Pen.Width = 2;
+        c.G.DrawRectangle(c.Pen, dst);
+        c.G.Restore(st);
+    }
+
+    protected static bool UseMemes(Ctx c) { return c.Cfg.MemeImages && MemeLibrary.Count > 0; }
+
     // y range events can use: the headroom above the taskbar plus the taskbar itself
     protected static float Top(Ctx c) { return 4; }
     protected static float Bottom(Ctx c) { return c.Edge + c.H - 4; }
@@ -54,7 +82,7 @@ class Director
 
     public static readonly List<Kind> Kinds = new List<Kind>
     {
-        K("Dance Party", "Little critters climb out of the taskbar and dance (to your music if it's on).", false, () => new DanceParty()),
+        K("Dance Party", "Memes climb out of the taskbar and dance (to your music if it's on).", false, () => new DanceParty()),
         K("Fireworks", "Rockets launch off the taskbar and explode.", false, () => new Fireworks()),
         K("Black Hole", "A black hole opens and swallows the stars, then blows them back out.", false, () => new BlackHole()),
         K("Disco", "A disco ball drops in and sweeps spotlights across the taskbar.", false, () => new Disco()),
@@ -65,8 +93,11 @@ class Director
         K("Jelly Wobble", "The taskbar background wobbles like jelly.", false, () => new Jelly()),
         K("Gravity Flip", "Everything starts going the other way.", false, () => new GravityFlip()),
         K("Theme Morph", "Suddenly switches to a random theme for a few seconds.", false, () => new ThemeMorph()),
-        K("Bouncing Logo", "A logo bounces around. Wait for it to hit a corner...", true, () => new LogoBounce()),
-        K("Rainbow Toast", "A happy toast flies by trailing a rainbow.", true, () => new RainbowToast()),
+        K("Bouncing Meme", "A meme bounces around like an old DVD logo. Wait for it to hit a corner...", true, () => new LogoBounce()),
+        K("Meme Rain", "Memes rain down and bounce off the taskbar.", true, () => new MemeRain()),
+        K("Meme Pop-up", "A huge meme bursts up out of the taskbar. Boom.", true, () => new MemePopup()),
+        K("Meme Parade", "A line of memes marches across the taskbar.", true, () => new MemeParade()),
+        K("Rainbow Meme", "A meme flies by riding a rainbow.", true, () => new RainbowToast()),
         K("Meme Text", "Wow. Such taskbar. Very aura.", true, () => new MemeText()),
         K("Hitmarkers", "MLG hitmarkers and +100s everywhere.", true, () => new Hitmarkers()),
         K("Deal With It", "Pixel sunglasses drop onto the taskbar.", true, () => new DealWithIt()),
@@ -178,7 +209,7 @@ class CrazyOverlay : Overlay
 
 class DanceParty : ChaosEvent
 {
-    class Critter { public float X, Size, Phase; public int Kind; public Color C; public bool Flipper; }
+    class Critter { public float X, Size, Phase; public int Kind; public Color C; public bool Flipper; public Bitmap Meme; }
     readonly List<Critter> cs = new List<Critter>();
     float beatPhase;
 
@@ -188,6 +219,11 @@ class DanceParty : ChaosEvent
         int n = 5 + c.R.Next(5);
         for (int i = 0; i < n; i++)
             cs.Add(new Critter { X = c.W * (i + 0.5f) / n + c.Rnd(-40, 40), Size = c.Rnd(14, 22), Phase = c.Rnd(0, 6), Kind = c.R.Next(3), C = c.Col(i), Flipper = c.R.Next(3) == 0 });
+        if (UseMemes(c))
+        {
+            var memes = MemeLibrary.PickMany(c.R, n);
+            for (int i = 0; i < cs.Count; i++) { cs[i].Meme = memes[i % memes.Count]; cs[i].Size = c.Rnd(42, Math.Max(43, Math.Min(70, c.Edge - 14))); }
+        }
     }
 
     public override void Update(Ctx c, CrazyOverlay o)
@@ -212,6 +248,14 @@ class DanceParty : ChaosEvent
             float sway = (float)Math.Sin(bp * Math.PI * 0.5) * 6;
             float angle = 0;
             if (k.Flipper) { float f = bp % 4; if (f > 3) angle = (f - 3) * 360; }
+
+            if (k.Meme != null)
+            {
+                // the meme itself dances: bounce, squash and stretch, sway, the odd backflip
+                float my = c.Edge + s * (1 - show) - s * 0.5f - bounce * show * 1.4f;
+                DrawMeme(c, k.Meme, k.X + sway * 2, my, s, angle + sway * 1.5f, show, squash, 1 / squash, c.Col((int)bp));
+                continue;
+            }
 
             var st = c.G.Save();
             c.G.TranslateTransform(k.X + sway, cy);
@@ -599,13 +643,19 @@ class ThemeMorph : ChaosEvent
 
 class LogoBounce : ChaosEvent
 {
-    float x, y, vx, vy;
+    float x, y, vx, vy, LW = 92, LH = 30;
     int colorIx;
-    const float LW = 92, LH = 30;
+    Bitmap meme;
 
     public override void Start(Ctx c, CrazyOverlay o)
     {
         Life = 14;
+        if (UseMemes(c))
+        {
+            meme = MemeLibrary.Pick(c.R);
+            LH = Math.Max(20, Math.Min(64, Bottom(c) - Top(c) - 4));
+            LW = LH * meme.Width / meme.Height;
+        }
         x = c.Rnd(0, c.W - LW); y = c.Rnd(Top(c), Math.Max(Top(c) + 1, Bottom(c) - LH));
         vx = 140 * (c.R.Next(2) == 0 ? 1 : -1); vy = 55 * (c.R.Next(2) == 0 ? 1 : -1);
     }
@@ -630,6 +680,13 @@ class LogoBounce : ChaosEvent
     public override void DrawFront(Ctx c)
     {
         var col = Ctx.Hue(colorIx * 0.17f, 0.9f * Fade);
+        if (meme != null)
+        {
+            c.Brush.Color = Ctx.A(col, 0.5f * Fade);
+            c.G.FillRectangle(c.Brush, x - 4, y - 4, LW + 8, LH + 8);     // glow frame that changes colour on every bounce
+            DrawMeme(c, meme, x + LW / 2, y + LH / 2, LH, 0, Fade, 1, 1, Color.FromArgb(255, col));
+            return;
+        }
         using (var path = new GraphicsPath())
         {
             path.AddEllipse(x, y, LW, LH);
@@ -643,12 +700,14 @@ class LogoBounce : ChaosEvent
 class RainbowToast : ChaosEvent
 {
     float x, y0;
+    Bitmap meme;
     static readonly Color[] Bands = { Color.FromArgb(255, 40, 40), Color.FromArgb(255, 150, 0), Color.FromArgb(255, 235, 0), Color.FromArgb(40, 220, 80), Color.FromArgb(40, 140, 255), Color.FromArgb(150, 60, 255) };
 
     public override void Start(Ctx c, CrazyOverlay o)
     {
         Life = 5.5f;
         x = c.W + 40;
+        if (UseMemes(c)) meme = MemeLibrary.Pick(c.R);
         y0 = c.Edge > 40 ? c.Edge * 0.5f : c.Edge + c.H / 2f;
     }
 
@@ -666,6 +725,12 @@ class RainbowToast : ChaosEvent
                 c.Brush.Color = Ctx.A(Bands[i], 0.9f);
                 c.G.FillRectangle(c.Brush, tx, y - 9 + i * 3 + wob, 14, 3);
             }
+        }
+        if (meme != null)
+        {
+            DrawMeme(c, meme, x + 14, y, 44, (float)Math.Sin(Age * 6) * 8, 1);
+            for (int i = 0; i < 3; i++) c.Glow(x + c.Rnd(40, 300), y + c.Rnd(-16, 16), 1.2f, Color.White, 0.8f);
+            return;
         }
         // the toast
         c.Brush.Color = Color.FromArgb(222, 170, 105);
@@ -791,5 +856,101 @@ class DealWithIt : ChaosEvent
                 c.G.FillRectangle(c.Brush, x0 + col * px, y + r * px, px, px);
             }
         if (k >= 1) Text(c, "DEAL WITH IT", Impact, cx, Math.Max(10, y - 14), Color.White, Fade * Math.Min(1, (Age - 2) * 3));
+    }
+}
+
+class MemeRain : ChaosEvent
+{
+    class M { public Bitmap B; public float X, Y, VX, VY, Ang, Spin, H; }
+    readonly List<M> ms = new List<M>();
+    float next;
+
+    public override void Start(Ctx c, CrazyOverlay o) { Life = UseMemes(c) ? 9 : 0; }
+
+    public override void Update(Ctx c, CrazyOverlay o)
+    {
+        next -= c.Dt;
+        if (next <= 0 && Age < Life - 3)
+        {
+            next = c.Rnd(0.25f, 0.6f);
+            ms.Add(new M { B = MemeLibrary.Pick(c.R), X = c.Rnd(40, c.W - 40), Y = -40, VX = c.Rnd(-40, 40), VY = c.Rnd(0, 60), Spin = c.Rnd(-120, 120), H = c.Rnd(34, Math.Max(35, Math.Min(56, c.Edge - 8))) });
+        }
+        foreach (var m in ms)
+        {
+            m.VY += 520 * c.Dt;
+            m.X += m.VX * c.Dt; m.Y += m.VY * c.Dt; m.Ang += m.Spin * c.Dt;
+            float floor = c.Edge - m.H * 0.5f;
+            if (m.Y > floor && m.VY > 0)
+            {
+                m.Y = floor; m.VY = -m.VY * 0.55f; m.Spin *= 0.6f;
+                if (Math.Abs(m.VY) < 40) { m.VY = 0; m.Spin = 0; m.Ang *= 0.9f; m.VX *= 0.8f; }
+            }
+        }
+    }
+
+    public override void DrawFront(Ctx c) { foreach (var m in ms) DrawMeme(c, m.B, m.X, m.Y, m.H, m.Ang, Fade); }
+}
+
+class MemePopup : ChaosEvent
+{
+    Bitmap meme;
+    float x, h;
+    bool boomed;
+
+    public override void Start(Ctx c, CrazyOverlay o)
+    {
+        meme = UseMemes(c) ? MemeLibrary.Pick(c.R) : null;
+        Life = meme == null ? 0 : 4.5f;
+        h = Math.Max(40, Math.Min(c.Edge - 6, 110));
+        x = c.Rnd(h, Math.Max(h + 1, c.W - h));
+    }
+
+    public override void Update(Ctx c, CrazyOverlay o)
+    {
+        if (!boomed && Age > 0.45f)
+        {
+            boomed = true;
+            o.Flash = 0.9f;
+            o.Director.Request("Earthquake");
+        }
+    }
+
+    public override void DrawFront(Ctx c)
+    {
+        // pops up with an overshoot, holds, then drops back into the taskbar
+        float up = Math.Min(1, Age / 0.45f);
+        float overshoot = 1 + 2.2f * (float)Math.Pow(up - 1, 3) + 1.2f * (float)Math.Pow(up - 1, 2);
+        float down = Math.Max(0, (Age - (Life - 0.5f)) / 0.5f);
+        float rise = overshoot * (1 - down * down);
+        float zoom = Age > 0.45f && Age < 0.7f ? 1 + (0.7f - Age) * 0.6f : 1;
+        float y = c.Edge + h * 0.5f - rise * (h + 4);
+        DrawMeme(c, meme, x, y, h * zoom, (float)Math.Sin(Age * 3) * 3, 1, 1, 1, c.Col(1));
+    }
+}
+
+class MemeParade : ChaosEvent
+{
+    List<Bitmap> memes;
+    float x0;
+
+    public override void Start(Ctx c, CrazyOverlay o)
+    {
+        memes = UseMemes(c) ? MemeLibrary.PickMany(c.R, 7) : new List<Bitmap>();
+        Life = memes.Count == 0 ? 0 : 12;
+        x0 = c.W + 60;
+    }
+
+    public override void Update(Ctx c, CrazyOverlay o) { x0 -= 150 * c.Dt; }
+
+    public override void DrawFront(Ctx c)
+    {
+        float h = Math.Max(24, Math.Min(48, c.Edge - 8));
+        for (int i = 0; i < memes.Count; i++)
+        {
+            float x = x0 + i * (h * 1.9f);
+            if (x < -100 || x > c.W + 100) continue;
+            float step = (float)Math.Abs(Math.Sin(Age * 6 + i * 0.9)) * 8;
+            DrawMeme(c, memes[i], x, c.Edge - h * 0.5f - 2 - step, h, (float)Math.Sin(Age * 6 + i * 0.9) * 6, Fade);
+        }
     }
 }

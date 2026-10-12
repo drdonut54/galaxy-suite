@@ -45,6 +45,7 @@ class App : ApplicationContext, ICrazyHost
         menu.Opening += (s, e) => BuildMenu();
         BuildMenu();
 
+        if (cfg.MemeImages) MemeLibrary.EnsureLoaded();
         timer.Tick += (s, e) => Tick();
         SetFps();
         timer.Start();

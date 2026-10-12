@@ -73,7 +73,9 @@ Right-click the star icon in the system tray for quick controls:
 | --- | --- |
 | **Settings...** | Opens the Settings window. Double-clicking the tray icon does the same. |
 | **Theme ▸** | Switch theme instantly. |
-| **Presets ▸** | Chill, Aura Max, Inferno, Rave or Default, in one click. |
+| **Presets ▸** | Chill, Aura Max, Inferno, Rave, Meme Lord, Total Chaos or Default, in one click. |
+| **Crazy mode / Meme mode** | Quick on/off toggles. |
+| **Do something crazy ▸** | Fire any event right now, or **Surprise me!** for a random one. |
 | **Music reactive / Fire curtain / Lightning** | Quick on/off toggles. |
 | **Pause / Resume** | Stops the animation. |
 | **Exit** | Closes it. |
@@ -89,7 +91,9 @@ Every change applies **instantly** and is saved automatically.
   - **Chill**: slow and calm
   - **Aura Max**: huge glow, lightning, plasma, sparks and fire
   - **Inferno**: everything on fire
-  - **Rave**: music-reactive visualizer and plasma
+  - **Rave**: music-reactive visualizer and plasma, plus crazy mode
+  - **Meme Lord**: meme mode
+  - **Total Chaos**: everything at once
   - **Default**
 - **Theme** and **Particles**. Particles can follow the theme, or you can force any style on any theme.
 - **Particle amount** and **Speed**.
@@ -109,6 +113,41 @@ Every change applies **instantly** and is saved automatically.
 | **Fire height** | How tall the fire gets. |
 | **Music reactive** and **Music sensitivity** | Everything pulses to the music playing on your PC. Turn sensitivity up if it barely moves. |
 | **Visualizer bars** | Equalizer bars bouncing above the taskbar. |
+
+**Crazy**
+- **Crazy mode**: every few seconds, something wild happens on the taskbar.
+- **Meme mode**: memes everywhere. It works on its own or together with crazy mode.
+- **How crazy**: how often events happen and how many run at once.
+- **Space above taskbar**: how far events can reach up over your windows. They're click-through.
+- **Use real meme images**: real memes from Imgflip's most popular list. They're downloaded once and kept in `%LOCALAPPDATA%\GalaxyTaskbar\memes`.
+  - **Get new memes** downloads a fresh batch, and **Open meme folder** shows them.
+  - If they can't be downloaded, drawn stand-ins are used instead.
+- **Events**: untick any you don't want, or press **▶** to try one right now, even with crazy mode off.
+
+| Event | What happens |
+| --- | --- |
+| Dance Party | Memes climb out of the taskbar and dance, in time with your music when Music reactive is on. |
+| Fireworks | Rockets launch off the taskbar and burst. |
+| Black Hole | Swallows the stars, then blows them back out. |
+| Disco | A disco ball drops in and sweeps spotlights across the taskbar. |
+| Snake | A snake hunts glowing food along the taskbar. |
+| Lightning Storm | A burst of lightning with flashes. |
+| Earthquake | Everything shakes. |
+| Glitch | Slices jump around and the colours split. |
+| Jelly Wobble | The background wobbles like jelly. |
+| Gravity Flip | Particles go the other way. |
+| Theme Morph | A random theme takes over for a few seconds. |
+| Bouncing Meme | DVD-logo style. Hit a corner for a celebration. |
+| Meme Rain | Memes fall and bounce off the taskbar. |
+| Meme Pop-up | A huge meme bursts up with a flash and a shake. |
+| Meme Parade | A line of memes marches across. |
+| Rainbow Meme | A meme flies by on a rainbow. |
+| Meme Text | Wow. Such taskbar. Very aura. |
+| Hitmarkers | MLG hitmarkers and +100s. |
+| Deal With It | Pixel shades drop onto the taskbar. |
+
+**Trigger events from shortcuts.** While Galaxy Taskbar is running, `GalaxyTaskbar.exe --event "Fireworks"` fires that event, and `--event random` fires a random one.
+Put that in a desktop shortcut, a hotkey or a Stream Deck button.
 
 **Colors: the theme builder**
 1. Click **Start from current theme**.

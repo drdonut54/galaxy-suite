@@ -29,7 +29,13 @@ Windows 11 customization by **drdonut54**.
   - sparks
   - music visualizer bars
 - **Music reactive**: the glow, lightning, fire and sparks pulse to whatever is playing.
-- **Settings window**: double-click the tray icon, or run the exe again while it's running. It has presets (Chill, Aura Max, Inferno, Rave), sliders for everything and a theme builder with colour pickers.
+- **Crazy mode & meme mode**: random events take over the taskbar. Ideas include:
+  - real memes dancing, raining down, popping up, marching and bouncing like a DVD logo
+  - fireworks, a black hole, a disco ball, a snake
+  - lightning storms, glitches, jelly wobble, earthquakes, gravity flips, theme morphs
+  - Comic Sans meme text, MLG hitmarkers and "deal with it" shades
+- **Real meme images**: popular meme templates are downloaded from [Imgflip](https://imgflip.com)'s public meme list on first use and cached on your PC. No meme images are included in this repository.
+- **Settings window**: double-click the tray icon, or run the exe again while it's running. It has presets (Chill, Aura Max, Inferno, Rave, Meme Lord, Total Chaos), sliders for everything and a theme builder with colour pickers.
 - One overlay per taskbar, so secondary monitors work too. Click-through, hides for full-screen apps, and drops its frame rate on battery.
 - Everything is saved to `config.json` next to the exe, which you can also hand-edit; it reloads automatically.
 
