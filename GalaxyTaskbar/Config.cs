@@ -71,7 +71,7 @@ class Config
     public double StarDensity = 1.0, Speed = 1.0, GlowStrength = 1.0, LightningRate = 1.0, FireHeight = 1.0;
     public double ChaosLevel = 0.5, AudioSensitivity = 1.5;
     public bool Glow = true, Wire = true, Lightning = true, FireCurtain = false, Flames = false, Plasma = false, Sparks = false, Equalizer = false;
-    public bool ShootingStars = true, Chaos = false, Meme = false, MusicReactive = false, AutoCycle = false;
+    public bool ShootingStars = true, Chaos = false, Meme = false, MusicReactive = false, AutoCycle = false, MemeImages = true;
     public HashSet<string> DisabledEvents = new HashSet<string>();
     public List<Theme> Custom = new List<Theme>();
 
@@ -101,7 +101,7 @@ class Config
 
     // ---------- presets ----------
 
-    public static readonly string[] Presets = { "Chill", "Aura Max", "Inferno", "Rave", "Default" };
+    public static readonly string[] Presets = { "Chill", "Aura Max", "Inferno", "Rave", "Meme Lord", "Total Chaos", "Default" };
 
     public void ApplyPreset(string name)
     {
@@ -124,7 +124,8 @@ class Config
                 if (!Theme.Name.Equals("Lava")) ThemeName = "Fire";
                 break;
             case "Rave":
-                MusicReactive = true; Equalizer = true; Plasma = true; LightningRate = 2; GlowStrength = 1.6;
+                MusicReactive = true; Equalizer = true; Plasma = true; LightningRate = 2; GlowStrength = 1.6; Chaos = true; ChaosLevel = 0.4;
+                DisabledEvents.Clear();
                 break;
             case "Meme Lord":
                 Meme = true; ChaosLevel = 0.7; Sparks = true; GlowStrength = 1.3;
@@ -173,6 +174,7 @@ class Config
             cfg.Meme = Bool(r, "memeMode", cfg.Meme);
             cfg.MusicReactive = Bool(r, "musicReactive", cfg.MusicReactive);
             cfg.AutoCycle = Bool(r, "autoCycleThemes", cfg.AutoCycle);
+            cfg.MemeImages = Bool(r, "memeImages", cfg.MemeImages);
             object v;
             if (r.TryGetValue("disabledEvents", out v) && v is object[])
                 foreach (var o in (object[])v) if (o is string) cfg.DisabledEvents.Add((string)o);
@@ -210,7 +212,7 @@ class Config
             P("glow", Glow), P("glowStrength", GlowStrength), P("auraHeight", AuraHeight), P("liveWire", Wire),
             P("lightning", Lightning), P("lightningRate", LightningRate), P("fireCurtain", FireCurtain), P("flames", Flames),
             P("fireHeight", FireHeight), P("plasma", Plasma), P("sparks", Sparks), P("equalizer", Equalizer),
-            P("chaosMode", Chaos), P("memeMode", Meme), P("chaosLevel", ChaosLevel), P("effectsHeight", EffectsHeight),
+            P("chaosMode", Chaos), P("memeMode", Meme), P("memeImages", MemeImages), P("chaosLevel", ChaosLevel), P("effectsHeight", EffectsHeight),
             P("musicReactive", MusicReactive), P("musicSensitivity", AudioSensitivity), P("disabledEvents", DisabledEvents.ToList()),
             P("fps", Fps), P("batteryFps", BatteryFps), P("customThemes", custom)
         };

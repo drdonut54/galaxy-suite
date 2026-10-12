@@ -445,7 +445,8 @@ class Overlay : Form
 
     void Simulate(float dt, int w, int h)
     {
-        float top = Rising ? 0 : headroom - 10;
+        // rising particles may drift a little above the edge, but never fill the crazy-mode space
+        float top = Rising ? Math.Max(0, headroom - Math.Max(aura + 10, 24)) : headroom - 10;
         for (int i = 0; i < Particles.Count; i++)
         {
             var p = Particles[i];
