@@ -5,6 +5,8 @@ Windows 11 customization and tools by **drdonut54**.
 > **All rights reserved.** This code is published for viewing only. You may not
 > copy, modify, redistribute or sell it. See [LICENSE](LICENSE).
 
+📖 **New here? Read the step-by-step [GUIDE.md](GUIDE.md)**. It covers setup, every button, themes, hotkeys, troubleshooting and uninstalling.
+
 ## What's inside
 
 | Folder | What it is |
